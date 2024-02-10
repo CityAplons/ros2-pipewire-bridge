@@ -1,0 +1,22 @@
+{
+    "name": "ROS2=Pipewire Devcontainer",
+    "dockerComposeFile": "compose.yaml",
+    "service": "dev",
+    "workspaceFolder": "/workspace",
+    "settings": {
+        "editor.rulers": [
+            100
+        ],
+        "clang-format.assumeFilename": "/workspace/.clang-format"
+    },
+    "extensions": [
+        "ms-vscode.cpptools",
+        "ms-vscode.cpptools-extension-pack",
+        "ms-vscode.cmake-tools",
+        "redhat.vscode-yaml",
+        "ms-iot.vscode-ros",
+        "xaver.clang-format",
+        "josetr.cmake-language-support-vscode"
+    ],
+    "remoteUser": "ros2pipe"
+}
