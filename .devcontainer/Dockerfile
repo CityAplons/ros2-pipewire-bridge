@@ -1,4 +1,4 @@
-FROM ros:humble-ros-base as base
+FROM ros:iron-ros-base as base
 
 RUN apt-get update && apt-get install -y \
     software-properties-common \
@@ -31,3 +31,4 @@ ENV PIPEWIRE_RUNTIME_DIR=/tmp
 ENV PULSE_RUNTIME_DIR=/tmp
 
 WORKDIR /home/ros2pipe
+RUN echo "source /opt/ros/iron/setup.bash" >> .bashrc
