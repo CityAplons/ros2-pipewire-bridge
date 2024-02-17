@@ -25,7 +25,8 @@ target_compile_features(pw_client PUBLIC c_std_99 cxx_std_17) # Require C99 and 
 target_compile_options(pw_client PUBLIC ${PIPEWIRE_CFLAGS_OTHER})
 
 ament_target_dependencies(pw_client
-  ${DEPENDENCIES}
+  rclcpp
+  pw_interfaces
 )
 
 ament_export_targets(pw_client HAS_LIBRARY_TARGET)

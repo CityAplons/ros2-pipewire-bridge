@@ -54,8 +54,8 @@ static void terminate(void * userdata, int signal_number)
   instance->on_terminate(signal_number);
 }
 
-Client::Client(const std::string & name)
-: connected_(false), name_(name), mutex_(nullptr)
+Client::Client(const std::string & name, std::shared_ptr<ILogger> logger)
+: connected_(false), name_(name), mutex_(nullptr), logger_(logger)
 {
   pw_init(nullptr, nullptr);
   loop_ = pw_thread_loop_new(name_.c_str(), nullptr);
@@ -96,6 +96,8 @@ bool Client::connect()
   connected_ = true;
   registry_ = pw_core_get_registry(core_, PW_VERSION_REGISTRY, 0);
   pw_registry_add_listener(registry_, &registry_listener_, &registry_events_, this);
+
+  logger_->Log("Connected");
   return true;
 }
 
@@ -116,10 +118,13 @@ void Client::disconnect()
 
   pw_core_disconnect(core_);
   connected_ = false;
+
+  logger_->Log("Disconnected");
 }
 
 void Client::on_terminate([[maybe_unused]] int signo)
 {
+  logger_->Log("Terminating...");
   pw_thread_loop_signal(loop_, false);
 }
 

@@ -7,8 +7,7 @@ namespace pw
 class ILogger
 {
 public:
-  ILogger();
-  virtual ~ILogger() = 0;
+  virtual ~ILogger() {}
   virtual void Log(const std::string & str) = 0;
 };
 } // namespace pw

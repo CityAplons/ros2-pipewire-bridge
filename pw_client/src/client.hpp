@@ -1,10 +1,13 @@
 #pragma once
 
 #include "utils/pw_lock.hpp"
+#include "logger/ilogger.hpp"
+#include "logger/stdout.hpp"
 
 #include <pipewire/pipewire.h>
 
 #include <cstdint>
+#include <memory>
 #include <string>
 
 namespace pw
@@ -48,11 +51,12 @@ private:
   };
 
   LoopMutex mutex_;
+  std::shared_ptr<ILogger> logger_;
 
 public:
-  Client(const std::string & name);
+  Client(const std::string & name, std::shared_ptr<ILogger> logger);
   Client()
-  : Client("ros2_generic_client")
+  : Client("ros2_generic_client", std::make_shared<SimpleLogger>())
   {
   }
   virtual ~Client();
@@ -65,6 +69,7 @@ public:
     , registry_{other.registry_}
     , client_{other.client_}
     , mutex_{std::move(other.mutex_)}
+    , logger_{std::move(other.logger_)}
   {
     other.loop_ = nullptr;
     other.context_ = nullptr;

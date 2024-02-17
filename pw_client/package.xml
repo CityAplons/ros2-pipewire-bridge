@@ -7,6 +7,7 @@
   <maintainer email="nmihaylovskiy@gmail.com">N. Mikhailovskiy</maintainer>
   <license>Apache-2.0</license>
 
+  <depend>rclcpp</depend>
   <depend>pw_interfaces</depend>
 
   <buildtool_depend>ament_cmake</buildtool_depend>
