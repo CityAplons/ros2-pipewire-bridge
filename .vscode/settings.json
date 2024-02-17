@@ -6,6 +6,10 @@
         "typeinfo": "cpp",
         "array": "cpp",
         "string": "cpp",
-        "string_view": "cpp"
+        "string_view": "cpp",
+        "deque": "cpp",
+        "forward_list": "cpp",
+        "vector": "cpp",
+        "iterator": "cpp"
     }
 }

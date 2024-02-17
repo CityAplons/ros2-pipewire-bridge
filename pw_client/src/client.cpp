@@ -1,4 +1,3 @@
-#include "audio_client.hpp"
 #include "client.hpp"
 
 namespace pw
@@ -56,12 +55,13 @@ static void terminate(void * userdata, int signal_number)
 }
 
 Client::Client(const std::string & name)
-: connected_(false), name_(name)
+: connected_(false), name_(name), mutex_(nullptr)
 {
   pw_init(nullptr, nullptr);
-
   loop_ = pw_thread_loop_new(name_.c_str(), nullptr);
-  pw_thread_loop_lock(loop_);
+  mutex_.update(loop_);
+
+  const std::lock_guard<LoopMutex> lock(mutex_);
 
   // TODO: test.. these hooks is used only if pw_thread_loop_wait called
   pw_loop_add_signal(pw_thread_loop_get_loop(loop_), SIGINT, terminate, this);
@@ -70,15 +70,16 @@ Client::Client(const std::string & name)
   context_ = pw_context_new(pw_thread_loop_get_loop(loop_), nullptr, 0);
 
   pw_thread_loop_start(loop_);
-  pw_thread_loop_unlock(loop_);
 }
 
 Client::~Client()
 {
-  pw_context_destroy(context_);
+  if (connected_) {
+    disconnect();
+  }
 
-  pw_thread_loop_unlock(loop_);
   pw_thread_loop_stop(loop_);
+  pw_context_destroy(context_);
   pw_thread_loop_destroy(loop_);
 
   pw_deinit();
@@ -86,6 +87,7 @@ Client::~Client()
 
 bool Client::connect()
 {
+  const std::lock_guard<LoopMutex> lock(mutex_);
   core_ = pw_context_connect(context_, nullptr, 0);
   if (!core_) {
     return false;
@@ -93,17 +95,27 @@ bool Client::connect()
 
   connected_ = true;
   registry_ = pw_core_get_registry(core_, PW_VERSION_REGISTRY, 0);
-
   pw_registry_add_listener(registry_, &registry_listener_, &registry_events_, this);
-
   return true;
 }
 
 void Client::disconnect()
 {
-  pw_proxy_destroy((struct pw_proxy *)client_);
-  pw_proxy_destroy((struct pw_proxy *)registry_);
+  const std::lock_guard<LoopMutex> lock(mutex_);
+  if (!core_) {
+    return;
+  }
+
+  if (client_) {
+    pw_proxy_destroy((struct pw_proxy *)client_);
+  }
+
+  if (registry_) {
+    pw_proxy_destroy((struct pw_proxy *)registry_);
+  }
+
   pw_core_disconnect(core_);
+  connected_ = false;
 }
 
 void Client::on_terminate([[maybe_unused]] int signo)

@@ -1,5 +1,7 @@
 #pragma once
 
+#include "utils/pw_lock.hpp"
+
 #include <pipewire/pipewire.h>
 
 #include <cstdint>
@@ -14,14 +16,14 @@ private:
   bool connected_;
   const std::string name_;
 
-  struct pw_thread_loop * loop_;
-  struct pw_context * context_;
-  struct pw_core * core_;
+  struct pw_thread_loop * loop_ = nullptr;
+  struct pw_context * context_ = nullptr;
+  struct pw_core * core_ = nullptr;
 
-  struct pw_registry * registry_;
+  struct pw_registry * registry_ = nullptr;
   struct spa_hook registry_listener_;
 
-  struct pw_client * client_;
+  struct pw_client * client_ = nullptr;
   struct spa_hook client_listener_;
 
   // static void registry_remove_ev_(void *data, uint32_t id);
@@ -45,6 +47,8 @@ private:
     nullptr                    // .permissions
   };
 
+  LoopMutex mutex_;
+
 public:
   Client(const std::string & name);
   Client()
@@ -60,6 +64,7 @@ public:
     , core_{other.core_}
     , registry_{other.registry_}
     , client_{other.client_}
+    , mutex_{std::move(other.mutex_)}
   {
     other.loop_ = nullptr;
     other.context_ = nullptr;

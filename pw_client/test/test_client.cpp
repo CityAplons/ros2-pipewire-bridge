@@ -2,13 +2,13 @@
 
 #include <client.hpp>
 
-TEST(pw_client::client, alloc)
+TEST(client_impl, alloc)
 {
-  ASSERT_STREQ(pw::Client("test").get_name(), "test");
-  ASSERT_STREQ(pw::Client().get_name(), "ros2_generic_client");
+  ASSERT_STREQ(pw::Client("test").get_name().c_str(), "test");
+  ASSERT_STREQ(pw::Client().get_name().c_str(), "ros2_generic_client");
 }
 
-TEST(pw_client::client, connect)
+TEST(client_impl, connect)
 {
   auto client = pw::Client("test");
   ASSERT_TRUE(client.connect());
