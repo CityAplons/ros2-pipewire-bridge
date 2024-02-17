@@ -1,3 +1,11 @@
 {
-    "cmake.sourceDirectory": "/workspace/pw_sink"
+    "cmake.sourceDirectory": "/workspace/pw_sink",
+    "files.associations": {
+        "cstdio": "cpp",
+        "typeindex": "cpp",
+        "typeinfo": "cpp",
+        "array": "cpp",
+        "string": "cpp",
+        "string_view": "cpp"
+    }
 }
